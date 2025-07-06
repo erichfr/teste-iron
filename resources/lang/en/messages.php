@@ -1,0 +1,37 @@
+<?php
+
+return [
+    'criar_tarefa' => 'Create Task',
+    'titulo' => 'Title',
+    'descricao' => 'Description',
+    'data_vencimento' => 'Due Date',
+    'status' => 'Status',
+    'prioridade' => 'Priority',
+    'acoes' => 'Actions',
+    'tarefas' => 'Tasks',
+    'excluir_tarefa' => 'Delete Task',
+    'criar_nova_tarefa' => 'Create New Task',
+    'tarefa' => 'Task',
+    'tarefas_criadas' => 'Created Tasks',
+    'editar_tarefa' => 'Edit Task',
+    'detalhes_tarefa' => 'Task Details',
+    'salvar' => 'Save',
+    'atualizar' => 'Update',
+    'cancelar' => 'Cancel',
+    'voltar' => 'Back',
+    'editar' => 'Edit',
+    'excluir' => 'Delete',
+    'sair' => 'Logout',
+    'confirmar_exclusao' => 'Are you sure you want to delete this task?',
+    'minhas_tarefas' => 'My Tasks',
+    'tarefas_concluidas' => 'Completed Tasks',
+    'Novas Tarefas' => 'New Tasks',
+    'status_pendente' => 'Pending',
+    'status_em_progresso' => 'In Progress',
+    'status_concluida' => 'Completed',
+    'prioridade_baixa' => 'Low',
+    'prioridade_media' => 'Medium',
+    'prioridade_alta' => 'High',
+];
+
+
