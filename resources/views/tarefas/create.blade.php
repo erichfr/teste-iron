@@ -5,7 +5,7 @@
 @section('content')
     <h1>{{ __('messages.criar_tarefa') }}</h1>
 
-    <form action="{{ route('tarefas.store') }}" method="POST">
+    <form action="{{ route('tarefas.store') }}" method="POST" id="form-tarefa">
         @csrf
 
         <div class="mb-3">
@@ -59,4 +59,10 @@
         <button type="submit" class="btn btn-primary">{{ __('messages.salvar') }}</button>
         <a href="{{ route('tarefas.index') }}" class="btn btn-secondary">{{ __('messages.cancelar') }}</a>
     </form>
+
+    <script>
+        document.getElementById('form-tarefa').addEventListener('submit', function () {
+            this.querySelector('button[type="submit"]').disabled = true;
+        });
+    </script>
 @endsection

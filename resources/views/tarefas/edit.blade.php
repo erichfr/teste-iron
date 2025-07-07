@@ -5,12 +5,9 @@
 @section('content')
     <h1>{{ __('messages.editar_tarefa') }}</h1>
 
-    <form action="{{ route('tarefas.update', $tarefa) }}" method="POST">
+    <form action="{{ route('tarefas.update', $tarefa) }}" method="POST" id="form-tarefa-edit">
         @csrf
         @method('PUT')
-
-        <!-- Campos iguais ao create, só mudam os valores preenchidos -->
-        <!-- Use old() com fallback para $tarefa -->
 
         <div class="mb-3">
             <label for="titulo" class="form-label">{{ __('messages.titulo') }}</label>
@@ -63,4 +60,10 @@
         <button type="submit" class="btn btn-primary">{{ __('messages.atualizar') }}</button>
         <a href="{{ route('tarefas.index') }}" class="btn btn-secondary">{{ __('messages.cancelar') }}</a>
     </form>
+
+    <script>
+        document.getElementById('form-tarefa-edit').addEventListener('submit', function () {
+            this.querySelector('button[type="submit"]').disabled = true;
+        });
+    </script>
 @endsection

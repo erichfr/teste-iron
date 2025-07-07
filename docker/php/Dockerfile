@@ -37,4 +37,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
 
 RUN chown -R www-data:www-data /var/www
 
+RUN composer require beyondcode/laravel-websockets
+
 EXPOSE 9000
+EXPOSE 6001

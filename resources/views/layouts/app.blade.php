@@ -43,6 +43,134 @@
         @yield('content')
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {{-- Toast container para notificações visuais --}}
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Notificação</strong>
+                <small>agora</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+            <div class="toast-body" id="toast-body"></div>
+        </div>
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.11.2/dist/echo.iife.min.js"></script>
+
+
+
+
+<script>
+    @auth
+
+        const userId = {{ auth()->id() }};
+
+        window.Echo = new window.Echo({
+            broadcaster: 'pusher',
+            key: '{{ config('broadcasting.connections.pusher.key') }}',
+            cluster: '{{ config('broadcasting.connections.pusher.options.cluster') }}',
+            wsHost: window.location.hostname,
+            wsPort: 6001,
+            forceTLS: false,
+            disableStats: true,
+            enabledTransports: ['ws', 'wss'],
+        });
+
+        window.Echo.private(`tasks.${userId}`)
+            .listen('.TaskCreated', e => {
+                adicionarTarefaNoDOM(e);
+                mostrarNotificacao('Nova tarefa criada: ' + e.titulo);
+            })
+            .listen('.TaskUpdated', e => {
+                atualizarTarefaNoDOM(e);
+                mostrarNotificacao('Tarefa atualizada: ' + e.titulo);
+            });
+    @endauth
+
+    function adicionarTarefaNoDOM(tarefa) {
+        const tbody = document.querySelector('table tbody');
+        if (!tbody) return;
+
+        // Se já existe, não duplica
+        if (document.getElementById(`task-${tarefa.id}`)) return;
+
+        const tr = document.createElement('tr');
+        tr.id = `task-${tarefa.id}`;
+
+        tr.innerHTML = `
+            <td>${tarefa.titulo}</td>
+            <td>${tarefa.descricao}</td>
+            <td>${new Date(tarefa.data_vencimento).toLocaleDateString()}</td>
+            <td>${traduzirStatus(tarefa.status)}</td>
+            <td>${traduzirPrioridade(tarefa.prioridade)}</td>
+            <td>
+                <a href="/tarefas/${tarefa.id}/edit" class="btn btn-sm btn-primary">Editar</a>
+                <form action="/tarefas/${tarefa.id}" method="POST" style="display:inline-block;" onsubmit="return confirm('Tem certeza que deseja excluir?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button class="btn btn-sm btn-danger">Excluir</button>
+                </form>
+            </td>
+        `;
+
+        tbody.prepend(tr);
+    }
+
+    function atualizarTarefaNoDOM(tarefa) {
+        const tr = document.getElementById(`task-${tarefa.id}`);
+        if (!tr) {
+            adicionarTarefaNoDOM(tarefa);
+            return;
+        }
+
+        tr.innerHTML = `
+            <td>${tarefa.titulo}</td>
+            <td>${tarefa.descricao}</td>
+            <td>${new Date(tarefa.data_vencimento).toLocaleDateString()}</td>
+            <td>${traduzirStatus(tarefa.status)}</td>
+            <td>${traduzirPrioridade(tarefa.prioridade)}</td>
+            <td>
+                <a href="/tarefas/${tarefa.id}/edit" class="btn btn-sm btn-primary">Editar</a>
+                <form action="/tarefas/${tarefa.id}" method="POST" style="display:inline-block;" onsubmit="return confirm('Tem certeza que deseja excluir?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button class="btn btn-sm btn-danger">Excluir</button>
+                </form>
+            </td>
+        `;
+    }
+
+    function traduzirStatus(status) {
+        const map = {
+            pendente: 'Pendente',
+            em_progresso: 'Em Progresso',
+            concluida: 'Concluída'
+        };
+        return map[status] || status;
+    }
+
+    function traduzirPrioridade(prioridade) {
+        const map = {
+            baixa: 'Baixa',
+            media: 'Média',
+            alta: 'Alta'
+        };
+        return map[prioridade] || prioridade;
+    }
+
+
+    function mostrarNotificacao(mensagem) {
+        const toastEl = document.getElementById('liveToast');
+        const toastBody = document.getElementById('toast-body');
+        if (!toastEl || !toastBody) return;
+
+        toastBody.textContent = mensagem;
+        new bootstrap.Toast(toastEl).show();
+    }
+
+
+</script>
 </body>
 </html>

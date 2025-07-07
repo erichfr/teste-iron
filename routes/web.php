@@ -1,7 +1,9 @@
 <?php
 
+use App\Events\TaskCreated;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskController;
+use App\Models\Task;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 

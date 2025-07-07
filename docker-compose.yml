@@ -20,7 +20,6 @@ services:
     depends_on:
       - mysql
       - redis
-
   nginx:
     image: nginx:alpine
     container_name: teste-iron-nginx
@@ -60,19 +59,30 @@ services:
     networks:
       - teste-iron-network
 
-  websocket:
-    image: node:20-alpine
-    container_name: teste-iron-websocket
-    working_dir: /var/www
-    volumes:
-      - ./:/var/www
-      - ./node_modules:/var/www/node_modules
-    command: >
-      sh -c "npm install && npm run dev"
-    depends_on:
-      - app
+  websockets:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: websocket
+    command: php artisan websockets:serve
+    ports:
+      - "6001:6001"
     networks:
       - teste-iron-network
+    depends_on:
+      - app
+    environment:
+      - PUSHER_APP_ID=testeiron
+      - PUSHER_APP_KEY=testeiron123
+      - PUSHER_APP_SECRET=secret
+      - PUSHER_HOST=websocket
+      - PUSHER_PORT=6001
+      - PUSHER_SCHEME=http
+      - PUSHER_APP_CLUSTER=mt1
+    volumes:
+      - ./:/var/www
+      - ./vendor:/var/www/vendor
+      - ./node_modules:/var/www/node_modules
 
   queue-worker:
     build:

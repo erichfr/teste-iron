@@ -2,26 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TaskCreated;
+use App\Events\TaskUpdated;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
-    // Listar tarefas do usuário autenticado
     public function index()
     {
         $tarefas = Task::where('user_id', Auth::id())->latest()->get();
         return view('tarefas.index', compact('tarefas'));
     }
 
-    // Mostrar formulário de criação
     public function create()
     {
         return view('tarefas.create');
     }
 
-    // Armazenar nova tarefa
     public function store(Request $request)
     {
         $request->validate([
@@ -32,7 +31,7 @@ class TaskController extends Controller
             'prioridade' => 'required|in:baixa,media,alta',
         ]);
 
-        Task::create([
+        $task = Task::create([
             'titulo' => $request->titulo,
             'descricao' => $request->descricao,
             'data_vencimento' => $request->data_vencimento,
@@ -41,24 +40,23 @@ class TaskController extends Controller
             'user_id' => Auth::id(),
         ]);
 
+        event(new TaskCreated($task));
+
         return redirect()->route('tarefas.index')->with('success', 'Tarefa criada com sucesso!');
     }
 
-    // Mostrar uma tarefa específica (opcional)
     public function show(Task $tarefa)
     {
         $this->authorize('view', $tarefa);
         return view('tarefas.show', compact('tarefa'));
     }
 
-    // Mostrar formulário de edição
     public function edit(Task $tarefa)
     {
         $this->authorize('update', $tarefa);
         return view('tarefas.edit', compact('tarefa'));
     }
 
-    // Atualizar tarefa
     public function update(Request $request, Task $tarefa)
     {
         $this->authorize('update', $tarefa);
@@ -73,10 +71,11 @@ class TaskController extends Controller
 
         $tarefa->update($request->all());
 
+        event(new TaskUpdated($tarefa));
+
         return redirect()->route('tarefas.index')->with('success', 'Tarefa atualizada com sucesso!');
     }
 
-    // Deletar tarefa
     public function destroy(Task $tarefa)
     {
         $this->authorize('delete', $tarefa);
