@@ -10,7 +10,13 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
         <div class="container">
             <a class="navbar-brand" href="{{ url('/') }}">Tarefas</a>
-            <div class="collapse navbar-collapse">
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                    aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav ms-auto">
                     @auth
                         <li class="nav-item"><a href="{{ route('tarefas.index') }}" class="nav-link">Minhas Tarefas</a></li>
@@ -25,11 +31,12 @@
                         <li class="nav-item"><a href="{{ route('login') }}" class="nav-link">Login</a></li>
                         <li class="nav-item"><a href="{{ route('register') }}" class="nav-link">Registrar</a></li>
                     @endauth
+
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="langDropdown" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="langDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             {{ strtoupper(app()->getLocale()) }}
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown">
                             <li><a class="dropdown-item" href="{{ route('locale.switch', 'pt') }}">Português</a></li>
                             <li><a class="dropdown-item" href="{{ route('locale.switch', 'en') }}">English</a></li>
                         </ul>
@@ -43,7 +50,6 @@
         @yield('content')
     </main>
 
-    {{-- Toast container para notificações visuais --}}
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
         <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
@@ -58,10 +64,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.11.2/dist/echo.iife.min.js"></script>
-
-
-
-
 <script>
     @auth
 
@@ -86,6 +88,13 @@
             .listen('.TaskUpdated', e => {
                 atualizarTarefaNoDOM(e);
                 mostrarNotificacao('Tarefa atualizada: ' + e.titulo);
+            })
+            .listen('.TaskDeleted', (e) => {
+                const row = document.getElementById(`task-${e.id}`);
+                if (row) {
+                    row.remove();
+                    mostrarNotificacao('Tarefa removida com sucesso!');
+                }
             });
     @endauth
 
@@ -93,7 +102,6 @@
         const tbody = document.querySelector('table tbody');
         if (!tbody) return;
 
-        // Se já existe, não duplica
         if (document.getElementById(`task-${tarefa.id}`)) return;
 
         const tr = document.createElement('tr');
@@ -124,7 +132,6 @@
             adicionarTarefaNoDOM(tarefa);
             return;
         }
-
         tr.innerHTML = `
             <td>${tarefa.titulo}</td>
             <td>${tarefa.descricao}</td>
@@ -150,7 +157,6 @@
         };
         return map[status] || status;
     }
-
     function traduzirPrioridade(prioridade) {
         const map = {
             baixa: 'Baixa',
@@ -159,8 +165,6 @@
         };
         return map[prioridade] || prioridade;
     }
-
-
     function mostrarNotificacao(mensagem) {
         const toastEl = document.getElementById('liveToast');
         const toastBody = document.getElementById('toast-body');
@@ -169,7 +173,6 @@
         toastBody.textContent = mensagem;
         new bootstrap.Toast(toastEl).show();
     }
-
 
 </script>
 </body>

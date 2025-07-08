@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Events\TaskCreated;
+use App\Events\TaskDeleted;
 use App\Events\TaskUpdated;
+use App\Jobs\SendTaskCreatedEmail;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -41,6 +43,8 @@ class TaskController extends Controller
         ]);
 
         event(new TaskCreated($task));
+
+      //  SendTaskCreatedEmail::dispatch($task);
 
         return redirect()->route('tarefas.index')->with('success', 'Tarefa criada com sucesso!');
     }
@@ -81,6 +85,8 @@ class TaskController extends Controller
         $this->authorize('delete', $tarefa);
 
         $tarefa->delete();
+
+        event(new TaskDeleted($tarefa));
 
         return redirect()->route('tarefas.index')->with('success', 'Tarefa excluída com sucesso!');
     }
