@@ -28,13 +28,16 @@ docker-compose up -d --build
 docker-compose exec app composer install
 docker-compose exec app npm install
 
-```
-
-Continua...
 
 # 5. Execute as migrações
 docker-compose exec app php artisan migrate
 
 # 6. Compile os assets (opcional)
 docker-compose exec app npm run dev
+
+
+
+```
+
+Continua...
 
