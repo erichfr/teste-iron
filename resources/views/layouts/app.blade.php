@@ -101,6 +101,10 @@
                     mostrarNotificacao('Tarefa removida com sucesso!');
                 }
             });
+            Echo.private(`tasks.${userId}`)
+            .listen('.TaskDeadlineAlert', (e) => {
+                mostrarNotificacao('⚠️ Alerta: Tarefa prestes a vencer — ' + e.titulo);
+            });
     @endauth
 
     function adicionarTarefaNoDOM(tarefa) {

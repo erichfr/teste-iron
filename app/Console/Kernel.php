@@ -13,6 +13,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('tasks:notify-near-due-date')->dailyAt('08:00');
+        $schedule->command('tasks:alertar-vencimento')->everyMinute();
     }
 
     /**
