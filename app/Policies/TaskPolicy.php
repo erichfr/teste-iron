@@ -35,14 +35,16 @@ class TaskPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Task $tarefa)
+    public function update(User $user, Task $task)
     {
-        return $user->id === $tarefa->user_id;
+        return $user->id === $task->user_id
+            || $user->id === $task->usuario_atribuido_id;
     }
 
-    public function delete(User $user, Task $tarefa)
+    public function delete(User $user, Task $task)
     {
-        return $user->id === $tarefa->user_id;
+        return $user->id === $task->user_id
+            || $user->id === $task->usuario_atribuido_id;
     }
 
 

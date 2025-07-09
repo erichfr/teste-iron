@@ -12,18 +12,27 @@ class TaskDeleted implements ShouldBroadcast
 {
     use Dispatchable, SerializesModels;
 
-    public $taskId;
-    public $userId;
+    public $task;
 
-    public function __construct(Task $task)
+    public function __construct($task)
     {
-        $this->taskId = $task->id;
-        $this->userId = $task->user_id;
+        $this->task = $task;
     }
 
     public function broadcastOn()
     {
-        return new PrivateChannel('tasks.' . $this->userId);
+        $channels = [];
+
+        if (!empty($this->task->user_id)) {
+            $channels[] = new PrivateChannel('tasks.' . $this->task->user_id);
+        }
+
+        if (!empty($this->task->usuario_atribuido_id) &&
+            $this->task->usuario_atribuido_id !== $this->task->user_id) {
+            $channels[] = new PrivateChannel('tasks.' . $this->task->usuario_atribuido_id);
+        }
+
+        return $channels;
     }
 
     public function broadcastAs()
@@ -34,7 +43,9 @@ class TaskDeleted implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
-            'id' => $this->taskId,
+            'id' => $this->task->id,
         ];
     }
 }
+
+

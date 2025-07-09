@@ -16,7 +16,9 @@ class Task extends Model
         'status',
         'prioridade',
         'user_id',
+        'usuario_atribuido_id',
     ];
+
 
     protected $casts = [
         'data_vencimento' => 'datetime:Y-m-d',
@@ -25,5 +27,10 @@ class Task extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function usuarioAtribuido()
+    {
+        return $this->belongsTo(User::class, 'usuario_atribuido_id');
     }
 }

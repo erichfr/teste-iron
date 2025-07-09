@@ -56,6 +56,21 @@
             @enderror
         </div>
 
+        <div class="mb-3">
+            <label for="usuario_atribuido_id" class="form-label">Atribuir a</label>
+            <select name="usuario_atribuido_id" class="form-select @error('usuario_atribuido_id') is-invalid @enderror">
+                <option value="">Selecione um usuário</option>
+                @foreach($usuarios as $usuario)
+                    <option value="{{ $usuario->id }}" {{ old('usuario_atribuido_id') == $usuario->id ? 'selected' : '' }}>
+                        {{ $usuario->name }}
+                    </option>
+                @endforeach
+            </select>
+            @error('usuario_atribuido_id')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
         <button type="submit" class="btn btn-primary">{{ __('messages.salvar') }}</button>
         <a href="{{ route('tarefas.index') }}" class="btn btn-secondary">{{ __('messages.cancelar') }}</a>
     </form>

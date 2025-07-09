@@ -19,6 +19,11 @@
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav ms-auto">
                     @auth
+                        <li class="nav-item d-flex align-items-center me-2">
+                            <span class="nav-link disabled text-dark">
+                                {{ Auth::user()->name }}
+                            </span>
+                        </li>
                         <li class="nav-item"><a href="{{ route('tarefas.index') }}" class="nav-link">Minhas Tarefas</a></li>
                         <li class="nav-item"><a href="{{ route('tarefas.create') }}" class="nav-link">Nova Tarefa</a></li>
                         <li class="nav-item">

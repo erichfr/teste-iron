@@ -16,7 +16,6 @@ Ver Tarefas
 @endcomponent
 
 Obrigado,<br>
-{{ config('app.name') }}
 @endcomponent
 
 

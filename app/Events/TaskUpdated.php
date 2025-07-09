@@ -28,7 +28,17 @@ class TaskUpdated implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('tasks.' . $this->task->user_id);
+        $channels = [];
+
+        if ($this->task->user_id) {
+            $channels[] = new PrivateChannel('tasks.' . $this->task->user_id);
+        }
+
+        if ($this->task->usuario_atribuido_id && $this->task->usuario_atribuido_id !== $this->task->user_id) {
+            $channels[] = new PrivateChannel('tasks.' . $this->task->usuario_atribuido_id);
+        }
+
+        return $channels;
     }
 
     public function broadcastAs()
