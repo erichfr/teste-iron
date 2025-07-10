@@ -28,9 +28,17 @@ docker-compose up -d --build
 docker-compose exec app composer install
 docker-compose exec app npm install
 
-
 # 5. Execute as migrações
 docker-compose exec app php artisan migrate
+
+# 6. Gere a Key
+docker-compose exec app php artisan key:generate
+
+# 7. Dê permissão as pastas
+- Entre no container e rode os comandos abaixo
+chown -R www-data:www-data storage bootstrap/cache
+chmod -R 775 storage bootstrap/cache
+
 
 
 ```
